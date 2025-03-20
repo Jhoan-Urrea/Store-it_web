@@ -1,7 +1,6 @@
-const app = require('./app');
+const sequelize = require("./config/database");
 
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-    console.log(`Servidor en ejecución en http://localhost:${port}`);
-});
+sequelize
+    .authenticate()
+    .then(() => console.log("✅ Conexión con PostgreSQL establecida correctamente"))
+    .catch(err => console.error("❌ Error al conectar con PostgreSQL:", err));
