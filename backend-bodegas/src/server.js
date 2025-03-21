@@ -1,6 +1,12 @@
-const sequelize = require("./config/database");
+import app from './app.js';
+import dotenv from 'dotenv';
 
-sequelize
-    .authenticate()
-    .then(() => console.log("✅ Conexión con PostgreSQL establecida correctamente"))
-    .catch(err => console.error("❌ Error al conectar con PostgreSQL:", err));
+dotenv.config();
+
+// Definir el puerto
+const PORT = process.env.PORT || 5000;
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+});

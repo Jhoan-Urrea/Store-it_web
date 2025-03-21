@@ -1,17 +1,35 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import sequelize from './config/database.js';
+import userRoutes from './routes/usuarioRoutes.js'; // Asegúrate de que esta ruta es correcta
 
+// Crear la instancia de Express
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Middlewares
+app.use(cors()); // Habilita CORS
+app.use(morgan('dev')); // Logger de peticiones HTTP
+app.use(express.json()); // Soporte para JSON en requests
 
-// Ruta raíz
+// Rutas
+app.use('/api/users', userRoutes); // Ruta de usuarios (cambia según tus rutas)
+
+// Ruta base
 app.get('/', (req, res) => {
-    res.send('¡Servidor funcionando correctamente! 🚀');
+    res.send('✅ API funcionando correctamente');
 });
 
-// Exportar app
-module.exports = app;
+// Sincronizar base de datos (opcional, usar con precaución en producción)
+const syncDatabase = async () => {
+    try {
+        await sequelize.sync({ alter: true }); // Crea o actualiza las tablas
+        console.log('✅ Base de datos sincronizada.');
+    } catch (error) {
+        console.error('❌ Error al sincronizar la base de datos:', error);
+    }
+};
+
+syncDatabase();
+
+export default app;
