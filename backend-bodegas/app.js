@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import {connectSequelize} from './config/database.js';
 import userRoutes from './routes/usuarioRoutes.js';
+import user from './routes/user.js';
 
 import cors from 'cors';
 
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 
 // Rutas
 app.use('/usuarioRoutes', userRoutes); // Ruta de usuarios (cambia según tus rutas)
+app.use('/user', user);
 
 // Ruta base
 app.get('/', (req, res) => {
