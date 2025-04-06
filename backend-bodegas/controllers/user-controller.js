@@ -3,7 +3,7 @@ class UserController{
         this.userServices = userServices;
     }
 
-     register = async (req, res) => {
+    register = async (req, res) => {
         try {
             const user = await this.userServices.register(req.body);
             return res.status(200).json({data: "ok"});
@@ -12,7 +12,7 @@ class UserController{
         }
     }
 
-    async login(req, res) {
+    login = async (req, res) =>{
         try {
             const result = await this.userServices.login(req.body);
             return res.status(200).json({ result });

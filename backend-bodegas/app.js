@@ -34,6 +34,7 @@ app.get('/', (req, res) => {
 
 async function startServer() {
     try {
+      //await sequelize.sync({ force: true }); // Esto eliminará y recreará las tablas
       await connectSequelize(); // Conectar a la base de datos
       app.listen(PORT, () => {
         console.log(`Servidor corriendo en http://localhost:${PORT}`);
