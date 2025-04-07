@@ -17,7 +17,7 @@ Cliente.belongsTo(Persona);
 
 // Persona -> Usuario
 Persona.hasOne(Usuario, { foreignKey: 'personaId' });
-Usuario.belongsTo(Persona);
+Usuario.belongsTo(Persona, { foreignKey: 'personaId' });
 
 // Usuario -> TipoUsuario
 TipoUsuario.hasMany(Usuario, { foreignKey: 'tipoUsuarioId' });

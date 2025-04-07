@@ -1,4 +1,6 @@
-import Persona from '../models/persona.js';
+import Persona from '../models/Persona.js';
+import Usuario from '../models/Usuario.js';
+import TipoUsuario from '../models/TipoUsuario.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -14,14 +16,16 @@ class UserRepository {
   //Método para registrar un usuario
   async register(userData) {
     try {
+      // Validamos los datos de entrada
+      if(!userData.correo || !userData.password){
+          throw new Error("Correo y contraseña son obligatorios");
+      }
+        
 
-        try{
-            if(!userData.correo || !userData.password){
-                throw new Error("Correo y contraseña son obligatorios");
-            }
-        }catch (error) {
-            throw new Error("Email y contraseña son obligatorios.");
-        }
+      const tipoUsuario = await TipoUsuario.findOne({ where: { id: userData.tipoUsuarioId } });
+      if (!tipoUsuario) {
+        throw new Error('El tipo de usuario proporcionado no existe');
+      }
 
       // Verificar si el usuario ya existe
       const existingUser = await Persona.findOne({where: {correo: userData.correo} });
@@ -33,7 +37,7 @@ class UserRepository {
       const passwordHash = await bcrypt.hash(userData.password, 10);
 
       // Insertar el nuevo usuario
-      const nuevoUsuario = await Persona.create({
+      const nuevaPersona = await Persona.create({
         id: userData.id,
         primerNombre: userData.primerNombre,
         segundoNombre: userData.segundoNombre,
@@ -43,12 +47,16 @@ class UserRepository {
         telefono: userData.telefono,
         correo: userData.correo,
         direccion: userData.direccion,
-        password: passwordHash,
-        createAt: userData.createAt,
-        updateAt: userData.updateAt
       });
 
-      return {message: "Usuario creado con éxito", usuario: nuevoUsuario};
+      const nuevoUsuario = await Usuario.create({
+        password: passwordHash,
+        personaId: nuevaPersona.id,
+        tipoUsuarioId: userData.tipoUsuarioId
+      });
+
+
+      return {message: "Usuario creado con éxito", usuario: nuevaPersona, usuario: nuevoUsuario};
     } catch (error) {
       throw new Error(error.message);
     }
@@ -63,7 +71,9 @@ class UserRepository {
       }
 
       // Verificar si el usuario existe
-      const usuario = await Persona.findOne({where: {correo: userData.correo} });
+      const usuario = await Usuario.findOne({
+        include: [{ model: Persona, where: { correo: userData.correo } }],
+      });
       if (!usuario) {
         throw new Error('Usuario no encontrado');
       }
@@ -73,17 +83,18 @@ class UserRepository {
       if (!passwordMatch) {
         throw new Error('Contraseña incorrecta');
       }
-    } catch (error) {
-      throw new Error(error.message);
-    }
 
-    const token = jwt.sign(
+      const token = jwt.sign(
         {userId: userData.id, userEmail: userData.email },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
     return { login: true, token }
-    
+
+
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }
 
