@@ -1,21 +1,40 @@
-import {sequelize} from '../config/database.js';
+import { sequelize } from '../config/database.js';
 import Cargo from './Cargo.js';
 import Cliente from './Cliente.js';
 import Empleado from './Empleado.js';
-import Persona from './Persona.js';
-import Rol from './Rol.js';
-import Usuario from './Usuario.js';
 import UsuarioRol from './UsuarioRol.js';
+import Persona from './Persona.js';
+import Usuario from './Usuario.js';
+import Rol from './Rol.js';
+import TipoUsuario from './TipoUsuario.js';
 
-
-// Definir relaciones
+// Relaciones Persona -> Cliente/Empleado
 Persona.hasOne(Empleado, { foreignKey: 'personaId' });
-Persona.hasOne(Cliente, { foreignKey: 'personaId' });
 Empleado.belongsTo(Persona);
+
+Persona.hasOne(Cliente, { foreignKey: 'personaId' });
 Cliente.belongsTo(Persona);
 
-Usuario.belongsTo(Persona, { foreignKey: 'personaId' });
+// Persona -> Usuario
+Persona.hasOne(Usuario, { foreignKey: 'personaId' });
+Usuario.belongsTo(Persona);
+
+// Usuario -> TipoUsuario
+TipoUsuario.hasMany(Usuario, { foreignKey: 'tipoUsuarioId' });
+Usuario.belongsTo(TipoUsuario, { foreignKey: 'tipoUsuarioId' });
+
+// Usuario -> Rol (many-to-many)
 Usuario.belongsToMany(Rol, { through: UsuarioRol });
 Rol.belongsToMany(Usuario, { through: UsuarioRol });
 
-export { sequelize, Cargo, Cliente, Empleado, Persona, Rol, Usuario, UsuarioRol };
+export {
+  sequelize,
+  Cargo,
+  Cliente,
+  Empleado,
+  Persona,
+  Usuario,
+  UsuarioRol,
+  Rol,
+  TipoUsuario
+};

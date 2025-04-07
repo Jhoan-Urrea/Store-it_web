@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import {connectSequelize} from './config/database.js';
+import { connectSequelize, sequelize } from './config/database.js';
 import userRoutes from './routes/usuarioRoutes.js';
 import user from './routes/user.js';
 
@@ -34,8 +34,11 @@ app.get('/', (req, res) => {
 
 async function startServer() {
     try {
-      //await sequelize.sync({ force: true }); // Esto eliminará y recreará las tablas
+      await sequelize.sync({ force: true }); // Esto eliminará y recreará las tablas
+      sequelize.sync({ alter: true });
       await connectSequelize(); // Conectar a la base de datos
+      
+
       app.listen(PORT, () => {
         console.log(`Servidor corriendo en http://localhost:${PORT}`);
       });
