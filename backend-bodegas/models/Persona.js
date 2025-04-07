@@ -10,7 +10,7 @@ const Persona = sequelize.define('Persona', {
   fechaNacimiento: { type: DataTypes.DATEONLY, allowNull: false },
   telefono: { type: DataTypes.STRING(20), allowNull: false },
   correo: { type: DataTypes.STRING(100), unique: true, allowNull: false },
-  direccion: { type: DataTypes.TEXT, allowNull: false },
+  direccion: { type: DataTypes.TEXT, allowNull: true },
 });
 
 export default Persona;

@@ -10,9 +10,9 @@ class UserServices {
     async register(userData) {
 
         try{
-            //Validamos los datos de entrada
-            if(!userData.primerNombre || !userData.segundoNombre || !userData.primerApellido || !userData.segundoApellido || !userData.fechaNacimiento || !userData.telefono || !userData.correo || !userData.direccion || !userData.password || !userData.rolIds || !userData.tipoUsuarioId){
-              throw new Error("Todos los campos son obligatorios");
+            // Validamos los datos de entrada obligatorios
+            if (!userData.primerNombre || !userData.primerApellido || !userData.fechaNacimiento || !userData.telefono || !userData.correo || !userData.password || !userData.tipoUsuarioId) {
+                throw new Error("Los campos obligatorios no están completos");
             }
             console.log("Usuario válido, procesando registro...");
       
