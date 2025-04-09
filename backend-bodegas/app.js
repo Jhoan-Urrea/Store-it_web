@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import { connectSequelize, sequelize } from './config/database.js';
 import userRoutes from './routes/usuarioRoutes.js';
 import user from './routes/user.js';
-
 import cors from 'cors';
 
 import dotenv from 'dotenv';
@@ -14,7 +13,13 @@ const PORT = process.env.PORT || 3000;
 
 const app = express()
   .use(bodyParser.json())
-  .use(cookieParser(process.env.COOKIE_SECRET));
+  .use(cookieParser(process.env.COOKIE_SECRET))
+  .use(cors({
+    origin: '*',
+    credentials: true,
+    methods: '*',
+    allowedHeaders: '*',
+  }));  
 
 // Middleware de autenticación simulado
 app.use((req, res, next) => {
@@ -34,7 +39,7 @@ app.get('/', (req, res) => {
 
 async function startServer() {
     try {
-      //await sequelize.sync({ force: true }); // Esto eliminará y recreará las tablas
+      
       sequelize.sync({ alter: true });
       await connectSequelize(); // Conectar a la base de datos
       
