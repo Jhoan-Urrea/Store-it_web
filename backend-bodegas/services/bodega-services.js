@@ -2,7 +2,17 @@
 import * as bodegaRepo from '../repositories/bodega-repository.js';
 
 export const getAllBodegas = async () => {
-  return await bodegaRepo.obtenerTodos();
+  try {
+    const bodegas = await bodegaRepo.obtenerTodos();
+    if (!bodegas || bodegas.length === 0) {
+      await inicializarBodegas();
+      return await bodegaRepo.obtenerTodos();
+    }
+    return bodegas;
+  } catch (error) {
+    console.error('Error en getAllBodegas:', error);
+    throw error;
+  }
 };
 
 export const getBodegaById = async (id) => {

@@ -12,6 +12,12 @@ const userController = new UserController(userServices);
 
 router.post('/register', registroValidator.validatorParams, registroValidator.validator, userController.register);
 router.post('/login', loginValidator.validatorParams, loginValidator.validator, userController.login); 
-router.get('/profile', userController.profile);
+router.get('/profile', (req, res) => {
+  try {
+    res.json(req.user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 export default router;

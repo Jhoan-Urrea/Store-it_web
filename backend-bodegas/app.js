@@ -7,9 +7,12 @@ import user from './routes/user.js';
 import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
-
-// 🆕 Importar rutas generales (bodega, sector, puesto, tipoBodega)
 import mainRoutes from './routes/index.js';
+import { inicializarBodegas } from './models/negocio/Bodega.js';
+import { inicializarCiudades } from './models/ubicacion/Ciudad.js';
+import { inicializarTiposBodega } from './models/negocio/TipoBodega.js';
+import { inicializarContratos } from './models/negocio/Contrato.js';
+import { inicializarClientes } from './models/Cliente.js';
 
 dotenv.config();
 
@@ -23,20 +26,24 @@ const app = express()
     credentials: true,
     methods: '*',
     allowedHeaders: '*',
-  }));  
+  }));
 
-// Middleware de autenticación simulado
+// Middleware de autenticación simulado con datos de usuario
 app.use((req, res, next) => {
-  req.user = { id: 1 }; // Esto debería ser reemplazado por la lógica real de autenticación
-  console.log('Authenticated User:', req.user); // Agregar log para verificar el userId
+  req.user = {
+    id: 1,
+    nombre: "Juan Pérez",
+    email: "juan@example.com",
+    rol: "admin",
+    permisos: ["read", "write", "delete"]
+  };
+  console.log('Usuario autenticado:', req.user);
   next();
 });
 
 // Rutas existentes
 app.use('/usuarioRoutes', userRoutes);
 app.use('/user', user);
-
-// 🆕 Rutas nuevas montadas en /api
 app.use('/api', mainRoutes);
 
 // Ruta base
@@ -46,10 +53,16 @@ app.get('/', (req, res) => {
 
 async function startServer() {
   try {
-    //sequelize.sync({ alter: true });
-    sequelize.sync();
-    //sequelize.sync({ force: true });
-    await connectSequelize(); // Conectar a la base de datos
+    await sequelize.sync({ force: false }); // Cambia a true solo si necesitas recrear las tablas
+    await connectSequelize();
+    
+    console.log('Iniciando carga de datos iniciales...');
+    await inicializarCiudades();
+    await inicializarTiposBodega();
+    await inicializarBodegas();
+    await inicializarClientes();
+    await inicializarContratos();
+    console.log('Datos iniciales cargados correctamente');
 
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en http://localhost:${PORT}`);
@@ -60,7 +73,6 @@ async function startServer() {
 }
 
 const endpoints = listEndpoints(app);
-console.log(endpoints);
+console.log('Endpoints disponibles:', endpoints);
 
-// Exportar app
 startServer();
