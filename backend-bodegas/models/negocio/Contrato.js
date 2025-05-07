@@ -56,7 +56,7 @@ const inicializarContratos = async () => {
     const contratosIniciales = [
       {
         clienteId: 1,
-        bodegaId: 1,
+        bodegaId: 4300001,
         fechaInicio: new Date(),
         fechaFin: new Date(2024, 11, 31),
         status: 'Pendiente',
@@ -64,7 +64,7 @@ const inicializarContratos = async () => {
       },
       {
         clienteId: 2,
-        bodegaId: 2,
+        bodegaId: 1,
         fechaInicio: new Date(),
         fechaFin: new Date(2024, 11, 31),
         status: 'Aprobado',
@@ -76,7 +76,8 @@ const inicializarContratos = async () => {
       await Contrato.findOrCreate({
         where: {
           clienteId: contrato.clienteId,
-          bodegaId: contrato.bodegaId
+          bodegaId: contrato.bodegaId,
+          status: contrato.status
         },
         defaults: contrato
       });

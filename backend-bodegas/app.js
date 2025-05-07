@@ -55,7 +55,7 @@ async function startServer() {
   try {
     await sequelize.sync({ force: false }); // Cambia a true solo si necesitas recrear las tablas
     await connectSequelize();
-    
+  
     console.log('Iniciando carga de datos iniciales...');
     await inicializarCiudades();
     await inicializarTiposBodega();

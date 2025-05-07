@@ -4,9 +4,14 @@ export const contratoController = {
   getAllContratos: async (req, res) => {
     try {
       const contratos = await contratoService.getAllContratos();
+      console.log('Contratos encontrados:', contratos);
       res.json(contratos);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error('Error en getAllContratos:', error);
+      res.status(500).json({ 
+        message: error.message,
+        stack: error.stack 
+      });
     }
   },
 

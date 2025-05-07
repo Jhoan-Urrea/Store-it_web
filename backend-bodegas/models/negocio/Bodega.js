@@ -18,6 +18,16 @@ const Bodega = sequelize.define('Bodega', {
     idTipoBodega : {type: DataTypes.INTEGER, allowNull: false, references : { model: TipoBodega, key: 'id',}, onDelete: 'CASCADE',},
   });
 
+Bodega.belongsTo(Ciudad, {
+  foreignKey: 'idCiudad',
+  as: 'ciudad'
+});
+
+Bodega.belongsTo(TipoBodega, {
+  foreignKey: 'idTipoBodega',
+  as: 'tipoBodega'
+});
+
 const inicializarBodegas = async () => {
   try {
     const bodegasIniciales = [

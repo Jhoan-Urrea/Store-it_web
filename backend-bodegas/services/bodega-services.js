@@ -1,13 +1,12 @@
 // bodega-services.js
 import * as bodegaRepo from '../repositories/bodega-repository.js';
+import Ciudad from '../models/ubicacion/Ciudad.js';
+import TipoBodega from '../models/negocio/TipoBodega.js';
 
 export const getAllBodegas = async () => {
   try {
     const bodegas = await bodegaRepo.obtenerTodos();
-    if (!bodegas || bodegas.length === 0) {
-      await inicializarBodegas();
-      return await bodegaRepo.obtenerTodos();
-    }
+    console.log('Bodegas encontradas:', bodegas);
     return bodegas;
   } catch (error) {
     console.error('Error en getAllBodegas:', error);

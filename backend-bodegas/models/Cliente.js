@@ -9,8 +9,14 @@ const Cliente = sequelize.define('Cliente', {
 const inicializarClientes = async () => {
   try {
     const clientesIniciales = [
-      { id: 1, personaId: 1 },
-      { id: 2, personaId: 2 }
+      { 
+        id: 1,
+        personaId: 1
+      },
+      {
+        id: 2,
+        personaId: 2
+      }
     ];
 
     for (const cliente of clientesIniciales) {
