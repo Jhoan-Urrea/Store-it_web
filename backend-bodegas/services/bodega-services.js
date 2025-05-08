@@ -6,7 +6,8 @@ import TipoBodega from '../models/negocio/TipoBodega.js';
 export const getAllBodegas = async () => {
   try {
     const bodegas = await bodegaRepo.obtenerTodos();
-    console.log('Bodegas encontradas:', bodegas);
+    // Ya no necesitamos transformar los datos aquí
+    console.log('Bodegas procesadas:', JSON.stringify(bodegas, null, 2));
     return bodegas;
   } catch (error) {
     console.error('Error en getAllBodegas:', error);
