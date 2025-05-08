@@ -12,6 +12,32 @@ class UserRepository {
     this.collectionName = 'free_ai';
   }
 
+  async findByEmail(correo){
+    return await Usuario.findOne({where: {correo}});
+  }
+
+  async findByToken(token){
+    return await Usuario.findOne({
+      where: {
+        reset_token: token,
+        reset_token_expiration: { [Op.gt]: new Date() }
+      }
+    })
+  }
+
+  async saveResetToken(userId, token, expiration) {
+    return await Usuario.update(
+      { reset_token: token, reset_token_expiration: expiration },
+      { where: { id: userId } }
+    );
+  }
+
+  async clearResetToken(id) {
+    await User.update(
+      { reset_token: null, reset_token_expiration: null },
+      { where: { id } }
+    );
+  }
 
   //Método para registrar un usuario
   async register(userData) {
@@ -62,40 +88,6 @@ class UserRepository {
     }
   }
 
-  //Método para iniciar sesión
-  async login(userData) {
-    try {
-      // Validamos los datos de entrada
-      if (!userData.correo || !userData.password) {
-        throw new Error('Correo y contraseña son obligatorios');
-      }
-
-      // Verificar si el usuario existe
-      const usuario = await Usuario.findOne({
-        include: [{ model: Persona, where: { correo: userData.correo } }],
-      });
-      if (!usuario) {
-        throw new Error('Usuario no encontrado');
-      }
-
-      // Verificar la contraseña
-      const passwordMatch = await bcrypt.compare(userData.password, usuario.password);
-      if (!passwordMatch) {
-        throw new Error('Contraseña incorrecta');
-      }
-
-      const token = jwt.sign(
-        {userId: userData.id, userEmail: userData.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
-    return { login: true, token }
-
-
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
 }
 
 export default UserRepository;

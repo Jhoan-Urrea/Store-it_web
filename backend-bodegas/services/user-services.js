@@ -8,6 +8,7 @@ class UserServices {
     }
 
     async register(userData) {
+      console.log("Datos recibidos:", userData); 
 
         try{
             // Mapear alias a los nombres esperados
@@ -40,14 +41,31 @@ class UserServices {
           if(!userData.correo || !userData.password){
             throw new Error("Email y contraseña son obligatorios.")
           }
-    
-          return await this.userRepository.login(userData);
-        }catch (error){
-          throw new Error(error.message);
+
+          const usuario = await this.userRepository.findByEmail(userData.correo);
+          if(!usuario){
+            throw new Error("Usuario no encontrado");
+          }
+
+          
+        //Validamos la contraseña
+        const isPasswordValid = await bcrypt.compare(userData.password, usuario.password);
+        if (!isPasswordValid) {
+            throw new Error("Contraseña incorrecta.");
         }
-        
+
+        // Generar token JWT
+        const token = jwt.sign(
+            { id: usuario.id, correo: usuario.correo },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+      return { token, usuario };
+    }catch (error){
+      throw new Error(error.message);
     }
+}
     
 }
-
 export default UserServices;
