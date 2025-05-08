@@ -21,6 +21,8 @@ import Pais from './ubicacion/Pais.js';
 import Departamento from './ubicacion/Departamento.js';
 import Ciudad from './ubicacion/Ciudad.js';
 
+//modelos adicionales
+import Contrato from './negocio/Contrato.js';
 
 // Relaciones Persona -> Cliente/Empleado
 Persona.hasOne(Empleado, { foreignKey: 'personaId' });
@@ -61,6 +63,13 @@ Ciudad.belongsTo(Departamento, { foreignKey: 'idDepartamento' });
 Ciudad.hasMany(Bodega, { foreignKey: 'idCiudad' });
 Bodega.belongsTo(Ciudad, { foreignKey: 'idCiudad' });
 
+// Agregar las asociaciones de Contrato
+Contrato.belongsTo(Cliente, { foreignKey: 'clienteId' });
+Cliente.hasMany(Contrato, { foreignKey: 'clienteId' });
+
+Contrato.belongsTo(Bodega, { foreignKey: 'bodegaId' });
+Bodega.hasMany(Contrato, { foreignKey: 'bodegaId' });
+
 export {
   sequelize,
   Cargo,
@@ -77,5 +86,6 @@ export {
   TipoBodega,
   Pais,
   Departamento,
-  Ciudad
+  Ciudad,
+  Contrato
 };

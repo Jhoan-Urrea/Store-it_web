@@ -6,4 +6,29 @@ const Cliente = sequelize.define('Cliente', {
   personaId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
-export default Cliente;
+const inicializarClientes = async () => {
+  try {
+    const clientesIniciales = [
+      { 
+        id: 1,
+        personaId: 1
+      },
+      {
+        id: 2,
+        personaId: 2
+      }
+    ];
+
+    for (const cliente of clientesIniciales) {
+      await Cliente.findOrCreate({
+        where: { id: cliente.id },
+        defaults: cliente
+      });
+    }
+    console.log('Clientes iniciales creados correctamente');
+  } catch (error) {
+    console.error('Error al crear clientes iniciales:', error);
+  }
+};
+
+export { Cliente as default, inicializarClientes };

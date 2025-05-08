@@ -21,15 +21,17 @@ class UserController {
         }
     }
 
-    profile = async (req, res) => {
-
-        try{
-            return res.status(200).json({ 
-                data: `Tu email leído en tu token es: ${req.user.userEmail}`,
+    getProfile = async (req, res) => {
+        try {
+            const userData = {
                 id: req.user.id,
-                email: req.user.email
-            });
-        }catch(error){
+                nombre: req.user.nombre,
+                email: req.user.email,
+                rol: req.user.rol,
+                permisos: req.user.permisos
+            };
+            return res.status(200).json(userData);
+        } catch (error) {
             return res.status(400).json({ error: error.message });
         }
     }

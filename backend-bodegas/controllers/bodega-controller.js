@@ -3,10 +3,15 @@ import * as bodegaService from '../services/bodega-services.js';
 
 export const getAll = async (req, res) => {
   try {
-    const result = await bodegaService.getAllBodegas();
-    res.json(result);
+    const bodegas = await bodegaService.getAllBodegas();
+    console.log('Enviando bodegas al cliente:', bodegas);
+    res.json(bodegas);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error en getAll:', error);
+    res.status(500).json({ 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
