@@ -8,15 +8,10 @@ import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
 import mainRoutes from './routes/index.js';
-import { inicializarBodegas } from './models/negocio/Bodega.js';
-import { inicializarCiudades } from './models/ubicacion/Ciudad.js';
-import { inicializarTiposBodega } from './models/negocio/TipoBodega.js';
-import { inicializarContratos } from './models/negocio/Contrato.js';
-import { inicializarClientes } from './models/Cliente.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; 
 
 const app = express()
   .use(bodyParser.json())
@@ -53,17 +48,9 @@ app.get('/', (req, res) => {
 
 async function startServer() {
   try {
-    await sequelize.sync({ force: false }); // Cambia a true solo si necesitas recrear las tablas
+    await sequelize.sync({ force: false }); // Mantener false para no recrear las tablas
     await connectSequelize();
-  
-    console.log('Iniciando carga de datos iniciales...');
-    await inicializarCiudades();
-    await inicializarTiposBodega();
-    await inicializarBodegas();
-    await inicializarClientes();
-    await inicializarContratos();
-    console.log('Datos iniciales cargados correctamente');
-
+    
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en http://localhost:${PORT}`);
     });
