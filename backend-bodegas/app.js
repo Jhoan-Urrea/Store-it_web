@@ -8,11 +8,7 @@ import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
 import mainRoutes from './routes/index.js';
-import { inicializarBodegas } from './models/negocio/Bodega.js';
-import { inicializarCiudades } from './models/ubicacion/Ciudad.js';
-import { inicializarTiposBodega } from './models/negocio/TipoBodega.js';
-import { inicializarContratos } from './models/negocio/Contrato.js';
-import { inicializarClientes } from './models/Cliente.js';
+import { seedInitialData } from './seeders/initialData.js';
 
 dotenv.config();
 
@@ -27,19 +23,6 @@ const app = express()
     methods: '*',
     allowedHeaders: '*',
   }));
-
-// Middleware de autenticación simulado con datos de usuario
-app.use((req, res, next) => {
-  req.user = {
-    id: 1,
-    nombre: "Juan Pérez",
-    email: "juan@example.com",
-    rol: "admin",
-    permisos: ["read", "write", "delete"]
-  };
-  console.log('Usuario autenticado:', req.user);
-  next();
-});
 
 // Rutas existentes
 app.use('/usuarioRoutes', userRoutes);
@@ -57,11 +40,7 @@ async function startServer() {
     await connectSequelize();
   
     console.log('Iniciando carga de datos iniciales...');
-    await inicializarCiudades();
-    await inicializarTiposBodega();
-    await inicializarBodegas();
-    await inicializarClientes();
-    await inicializarContratos();
+    await seedInitialData();
     console.log('Datos iniciales cargados correctamente');
 
     app.listen(PORT, () => {

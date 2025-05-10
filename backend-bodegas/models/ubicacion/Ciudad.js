@@ -6,7 +6,15 @@ const Ciudad = sequelize.define('Ciudad', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   nombre: { type: DataTypes.STRING(50), allowNull: false },
   descripcion: { type: DataTypes.STRING(150), allowNull: true },
-  idDepartamento: {type: DataTypes.INTEGER, allowNull: false, references: {model: Departamento, key: 'id',}, onDelete: 'CASCADE',},
+  idDepartamento: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: { model: Departamento, key: 'id' },
+    onDelete: 'CASCADE'
+  }
+}, {
+  tableName: 'Ciudad', // Especificar el nombre exacto de la tabla
+  freezeTableName: true // Evitar que Sequelize modifique el nombre
 });
 
 const inicializarCiudades = async () => {
@@ -27,5 +35,10 @@ const inicializarCiudades = async () => {
     console.error('Error al crear ciudades iniciales:', error);
   }
 };
+
+// Sincronizar el modelo con la base de datos y luego sembrar los datos
+sequelize.sync({ force: false }).then(() => {
+  inicializarCiudades();
+});
 
 export { Ciudad as default, inicializarCiudades };
