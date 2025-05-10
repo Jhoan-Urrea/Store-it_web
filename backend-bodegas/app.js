@@ -12,7 +12,7 @@ import { seedInitialData } from './seeders/initialData.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; 
 
 const app = express()
   .use(bodyParser.json())
@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 
 async function startServer() {
   try {
-    await sequelize.sync({ force: false }); // Cambia a true solo si necesitas recrear las tablas
+    await sequelize.sync({ force: false }); // Mantener false para no recrear las tablas
     await connectSequelize();
   
     console.log('Iniciando carga de datos iniciales...');

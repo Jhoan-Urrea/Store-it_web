@@ -11,7 +11,7 @@ const router = Router();
 
 router.use('/usuarios', usuarioRoutes);
 router.use('/bodegas', bodegaRoutes);
-router.use('/sectores', sectorRoutes);
+router.use('/sectores', sectorRoutes);  
 router.use('/puestos', puestoRoutes);
 router.use('/tipos-bodega', tipoBodegaRoutes);
 router.use('/contratos', contratoRoutes);

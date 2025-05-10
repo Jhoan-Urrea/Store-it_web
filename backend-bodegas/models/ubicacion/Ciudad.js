@@ -37,8 +37,8 @@ const inicializarCiudades = async () => {
 };
 
 // Sincronizar el modelo con la base de datos y luego sembrar los datos
-sequelize.sync({ force: false }).then(() => {
-  inicializarCiudades();
-});
+//sequelize.sync({ force: false }).then(() => {
+  //inicializarCiudades();
+//});
 
 export { Ciudad as default, inicializarCiudades };
