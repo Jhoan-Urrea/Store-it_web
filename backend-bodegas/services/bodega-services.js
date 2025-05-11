@@ -1,32 +1,26 @@
 // bodega-services.js
-import * as bodegaRepo from '../repositories/bodega-repository.js';
-import Ciudad from '../models/ubicacion/Ciudad.js';
-import TipoBodega from '../models/negocio/TipoBodega.js';
+import bodegaRepository from '../repositories/bodega-repository.js';
 
 export const getAllBodegas = async () => {
-  try {
-    const bodegas = await bodegaRepo.obtenerTodos();
-    // Ya no necesitamos transformar los datos aquí
-    console.log('Bodegas procesadas:', JSON.stringify(bodegas, null, 2));
-    return bodegas;
-  } catch (error) {
-    console.error('Error en getAllBodegas:', error);
-    throw error;
-  }
+    return await bodegaRepository.findAll();
 };
 
 export const getBodegaById = async (id) => {
-  return await bodegaRepo.obtenerPorId(id);
+    return await bodegaRepository.findById(id);
 };
 
-export const createBodega = async (data) => {
-  return await bodegaRepo.crear(data);
+export const getBodegasDisponibles = async () => {
+    return await bodegaRepository.findDisponibles();
 };
 
-export const updateBodega = async (id, data) => {
-  return await bodegaRepo.actualizar(id, data);
+export const createBodega = async (bodegaData) => {
+    return await bodegaRepository.create(bodegaData);
+};
+
+export const updateBodega = async (id, bodegaData) => {
+    return await bodegaRepository.update(id, bodegaData);
 };
 
 export const deleteBodega = async (id) => {
-  return await bodegaRepo.eliminar(id);
+    return await bodegaRepository.delete(id);
 };

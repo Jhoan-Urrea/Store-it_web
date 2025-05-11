@@ -5,6 +5,7 @@ import * as bodegaController from '../controllers/bodega-controller.js';
 const router = Router();
 
 router.get('/', bodegaController.getAll);
+router.get('/disponibles', bodegaController.getDisponibles); // Nueva ruta usando el controlador
 router.get('/:id', bodegaController.getById);
 router.post('/', bodegaController.create);
 router.put('/:id', bodegaController.update);

@@ -6,8 +6,23 @@ import puestoRoutes from './puestoRoutes.js';
 import tipoBodegaRoutes from './tipoBodegaRoutes.js';
 import contratoRoutes from './contratoRoutes.js';
 import userRoutes from './user.js';
+import jwt from 'jsonwebtoken';
 
 const router = Router();
+
+// Middleware para agregar el token a todas las rutas
+router.use((req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secreto_temporal');
+      req.user = decoded;
+    } catch (error) {
+      console.error('Error al verificar token:', error);
+    }
+  }
+  next();
+});
 
 router.use('/usuarios', usuarioRoutes);
 router.use('/bodegas', bodegaRoutes);

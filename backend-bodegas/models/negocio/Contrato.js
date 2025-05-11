@@ -51,41 +51,4 @@ Contrato.belongsTo(Bodega, {
   targetKey: 'id'
 });
 
-const inicializarContratos = async () => {
-  try {
-    const contratosIniciales = [
-      {
-        clienteId: 1,
-        bodegaId: 4300001,
-        fechaInicio: new Date(),
-        fechaFin: new Date(2024, 11, 31),
-        status: 'Pendiente',
-        precioTotal: 1500.00
-      },
-      {
-        clienteId: 2,
-        bodegaId: 1,
-        fechaInicio: new Date(),
-        fechaFin: new Date(2024, 11, 31),
-        status: 'Aprobado',
-        precioTotal: 2500.00
-      }
-    ];
-
-    for (const contrato of contratosIniciales) {
-      await Contrato.findOrCreate({
-        where: {
-          clienteId: contrato.clienteId,
-          bodegaId: contrato.bodegaId,
-          status: contrato.status
-        },
-        defaults: contrato
-      });
-    }
-    console.log('Contratos iniciales creados correctamente');
-  } catch (error) {
-    console.error('Error al crear contratos iniciales:', error);
-  }
-};
-
-export { Contrato as default, inicializarContratos };
+export { Contrato as default };

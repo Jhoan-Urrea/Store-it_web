@@ -57,3 +57,13 @@ export const remove = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getDisponibles = async (req, res) => {
+  try {
+    const bodegas = await bodegaService.getBodegasDisponibles();
+    res.json(bodegas);
+  } catch (error) {
+    console.error('Error al obtener bodegas disponibles:', error);
+    res.status(500).json({ message: error.message });
+  }
+};

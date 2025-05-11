@@ -45,6 +45,17 @@ export const seedInitialData = async () => {
     });
     console.log('Tipo Usuario encontrado/creado:', tipoUsuario.nombre);
 
+    // 3. Crear o encontrar TipoUsuario Vendedor
+    const [tipoUsuarioVendedor] = await TipoUsuario.findOrCreate({
+      where: { tipoUsuario: 'vendedor' },
+      defaults: {
+        nombre: 'Vendedor',
+        descripcion: 'Usuario vendedor estándar',
+        tipoUsuario: 'vendedor'
+      }
+    });
+    console.log('Tipo Usuario Vendedor encontrado/creado:', tipoUsuarioVendedor.nombre);
+
     // 4. Crear o encontrar Persona
     const [persona] = await Persona.findOrCreate({
       where: { correo: 'juan@example.com' },
@@ -72,6 +83,34 @@ export const seedInitialData = async () => {
       }
     });
     console.log('Usuario encontrado/creado para:', persona.primerNombre);
+
+    // 4.2 Crear o encontrar Persona para Vendedor
+    const [personaVendedor] = await Persona.findOrCreate({
+      where: { correo: 'vendedor@example.com' },
+      defaults: {
+        primerNombre: 'Pedro',
+        segundoNombre: 'Luis',
+        primerApellido: 'García',
+        segundoApellido: 'López',
+        fechaNacimiento: '1985-05-15',
+        telefono: '3001234568',
+        direccion: 'Calle 456'
+      }
+    });
+    console.log('Persona Vendedor encontrada/creada:', personaVendedor.primerNombre);
+
+    // 4.3 Crear o encontrar Usuario para el Vendedor
+    const hashedPasswordVendedor = await bcrypt.hash('123456', 10);
+    const [usuarioVendedor] = await Usuario.findOrCreate({
+      where: { correo: personaVendedor.correo },
+      defaults: {
+        correo: personaVendedor.correo,
+        password: hashedPasswordVendedor,
+        tipoUsuarioId: tipoUsuarioVendedor.id,
+        personaId: personaVendedor.id
+      }
+    });
+    console.log('Usuario Vendedor encontrado/creado para:', personaVendedor.primerNombre);
 
     // 5. Crear o encontrar Ciudad
     const [ciudad] = await Ciudad.findOrCreate({
@@ -109,10 +148,9 @@ export const seedInitialData = async () => {
     });
     console.log('Tipo Bodega encontrada/creada:', tipoBodega.nombre);
 
-    // 8. Crear o encontrar Bodega
-    const [bodega] = await Bodega.findOrCreate({
-      where: { descripcion: 'Bodega Principal' },
-      defaults: {
+    // 8. Crear o encontrar múltiples Bodegas
+    const bodegasData = [
+      {
         descripcion: 'Bodega Principal',
         espacioOcupado: 0,
         largo: 100,
@@ -120,27 +158,114 @@ export const seedInitialData = async () => {
         alto: 50,
         telefono: '3157894561',
         codigoPostal: '630001',
-        direccion: 'Zona Industrial',
+        direccion: 'Zona Industrial Principal',
+        estadoLleno: false,
+        idCiudad: ciudad.id,
+        idTipoBodega: tipoBodega.id
+      },
+      {
+        descripcion: 'Bodega Refrigerada',
+        espacioOcupado: 0,
+        largo: 80,
+        ancho: 60,
+        alto: 40,
+        telefono: '3157894562',
+        codigoPostal: '630002',
+        direccion: 'Zona Industrial Sur',
+        estadoLleno: false,
+        idCiudad: ciudad.id,
+        idTipoBodega: tipoBodega.id
+      },
+      {
+        descripcion: 'Bodega Seguridad Alta',
+        espacioOcupado: 0,
+        largo: 120,
+        ancho: 90,
+        alto: 60,
+        telefono: '3157894563',
+        codigoPostal: '630003',
+        direccion: 'Zona Industrial Norte',
+        estadoLleno: false,
+        idCiudad: ciudad.id,
+        idTipoBodega: tipoBodega.id
+      },
+      {
+        descripcion: 'Mini Bodega',
+        espacioOcupado: 0,
+        largo: 50,
+        ancho: 40,
+        alto: 30,
+        telefono: '3157894564',
+        codigoPostal: '630004',
+        direccion: 'Centro Comercial Store-It',
+        estadoLleno: false,
+        idCiudad: ciudad.id,
+        idTipoBodega: tipoBodega.id
+      },
+      {
+        descripcion: 'Bodega Premium',
+        espacioOcupado: 0,
+        largo: 150,
+        ancho: 100,
+        alto: 70,
+        telefono: '3157894565',
+        codigoPostal: '630005',
+        direccion: 'Zona Empresarial',
         estadoLleno: false,
         idCiudad: ciudad.id,
         idTipoBodega: tipoBodega.id
       }
-    });
-    console.log('Bodega encontrada/creada:', bodega.descripcion);
+    ];
 
-    // 9. Crear o encontrar Contrato
-    const [contrato] = await Contrato.findOrCreate({
-      where: { clienteId: cliente.id, bodegaId: bodega.id },
-      defaults: {
+    const bodegas = [];
+    for (const bodegaData of bodegasData) {
+      const [bodega] = await Bodega.findOrCreate({
+        where: { descripcion: bodegaData.descripcion },
+        defaults: bodegaData
+      });
+      bodegas.push(bodega);
+      console.log('Bodega encontrada/creada:', bodega.descripcion);
+    }
+
+    // 9. Crear o encontrar Contratos
+    const contratos = [
+      {
         clienteId: cliente.id,
-        bodegaId: bodega.id,
+        bodegaId: 5, // Bodega Principal
         fechaInicio: new Date(),
         fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 3)),
         status: 'Pendiente',
         precioTotal: 1500000
+      },
+      {
+        clienteId: cliente.id,
+        bodegaId: 6, // Bodega Refrigerada
+        fechaInicio: new Date(),
+        fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+        status: 'Aprobado',
+        precioTotal: 2000000
+      },
+      {
+        clienteId: cliente.id,
+        bodegaId: 7, // Bodega Seguridad Alta
+        fechaInicio: new Date(),
+        fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        status: 'Pendiente',
+        precioTotal: 3000000
       }
-    });
-    console.log('Contrato encontrado/creado con éxito');
+    ];
+
+    for (const contratoData of contratos) {
+      const [contrato] = await Contrato.findOrCreate({
+        where: { 
+          clienteId: contratoData.clienteId,
+          bodegaId: contratoData.bodegaId,
+          status: contratoData.status
+        },
+        defaults: contratoData
+      });
+      console.log(`Contrato ${contrato.status} creado/encontrado para bodega ${contratoData.bodegaId}`);
+    }
 
     console.log('Datos iniciales sembrados correctamente');
   } catch (error) {
