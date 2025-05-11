@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { Persona, Usuario, Rol, UsuarioRol, TipoUsuario } from '../models/index.js';
-
+import notificationService from './notification-services.js';
 
 class UserServices {
     constructor(userRepository) {
@@ -27,7 +27,14 @@ class UserServices {
       
       
             //llamamos al repositorio para registrar el usuario
-            return await this.userRepository.register(userData);
+            const result = await this.userRepository.register(userData);
+            
+            // Si el usuario es cliente, crear notificación de bienvenida
+            if (userData.tipoUsuario === 'cliente') {
+                await notificationService.createWelcomeNotification(result.usuario.id);
+            }
+            
+            return result;
         }catch (error){
             throw new Error(error.message);
           

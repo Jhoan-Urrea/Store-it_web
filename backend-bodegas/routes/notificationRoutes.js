@@ -1,15 +1,13 @@
 import { Router } from 'express';
-import { checkRole } from '../middleware/auth-roles.js';
+import verifyToken from '../middleware/verifyToken.js';
+import * as notificationController from '../controllers/notification-controller.js';
 
 const router = Router();
 
-router.get('/unread', checkRole(['cliente', 'vendedor']), async (req, res) => {
-  try {
-    // Implementación temporal
-    res.json({ count: 0 });
-  } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
+router.use(verifyToken);
+
+router.get('/', notificationController.getNotifications);
+router.put('/:id/read', notificationController.markAsRead);
+router.get('/unread', notificationController.getUnreadCount);
 
 export default router;
