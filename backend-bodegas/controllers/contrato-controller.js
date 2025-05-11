@@ -61,3 +61,18 @@ export const remove = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const deleteRequest = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        const userRole = req.user.tipoUsuario;
+
+        await contratoService.deleteRequest(id, userId, userRole);
+        res.json({ message: 'Solicitud eliminada correctamente' });
+    } catch (error) {
+        console.error('Error al eliminar solicitud:', error);
+        res.status(error.message.includes('No autorizado') ? 403 : 500)
+           .json({ message: error.message });
+    }
+};

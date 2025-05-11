@@ -6,6 +6,7 @@ import puestoRoutes from './puestoRoutes.js';
 import tipoBodegaRoutes from './tipoBodegaRoutes.js';
 import contratoRoutes from './contratoRoutes.js';
 import userRoutes from './user.js';
+import notificationRoutes from './notificationRoutes.js';
 import jwt from 'jsonwebtoken';
 
 const router = Router();
@@ -31,5 +32,6 @@ router.use('/puestos', puestoRoutes);
 router.use('/tipos-bodega', tipoBodegaRoutes);
 router.use('/contratos', contratoRoutes);
 router.use('/user', userRoutes);
+router.use('/notifications', notificationRoutes);
 
 export default router;
