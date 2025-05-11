@@ -8,6 +8,7 @@ import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
 import mainRoutes from './routes/index.js';
+import { seedInitialData } from './seeders/initialData.js';
 
 dotenv.config();
 
@@ -23,19 +24,6 @@ const app = express()
     allowedHeaders: '*',
   }));
 
-// Middleware de autenticación simulado con datos de usuario
-app.use((req, res, next) => {
-  req.user = {
-    id: 1,
-    nombre: "Juan Pérez",
-    email: "juan@example.com",
-    rol: "admin",
-    permisos: ["read", "write", "delete"]
-  };
-  console.log('Usuario autenticado:', req.user);
-  next();
-});
-
 // Rutas existentes
 app.use('/usuarioRoutes', userRoutes);
 app.use('/user', user);
@@ -50,7 +38,11 @@ async function startServer() {
   try {
     await sequelize.sync({ force: false }); // Mantener false para no recrear las tablas
     await connectSequelize();
-    
+  
+    console.log('Iniciando carga de datos iniciales...');
+    await seedInitialData();
+    console.log('Datos iniciales cargados correctamente');
+
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en http://localhost:${PORT}`);
     });

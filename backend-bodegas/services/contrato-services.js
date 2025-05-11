@@ -1,57 +1,54 @@
-import Contrato from '../models/negocio/Contrato.js';
-import Cliente from '../models/Cliente.js';
-import Bodega from '../models/negocio/Bodega.js';
+import contratoRepository from '../repositories/contrato-repository.js';
 
 export const getAllContratos = async () => {
-  try {
-    const contratos = await Contrato.findAll({
-      include: [
-        {
-          model: Cliente,
-          required: true
-        },
-        {
-          model: Bodega,
-          required: true
-        }
-      ]
-    });
+    try {
+        const contratos = await contratoRepository.findAll();
+        return contratos.map(contrato => {
+            const contratoJSON = contrato.toJSON();
+            return {
+                id: contratoJSON.id,
+                cliente: contratoJSON.Cliente ? {
+                    id: contratoJSON.Cliente.id,
+                    nombre: contratoJSON.Cliente.Persona ? 
+                        `${contratoJSON.Cliente.Persona.primerNombre || ''} ${contratoJSON.Cliente.Persona.segundoNombre || ''} ${contratoJSON.Cliente.Persona.primerApellido || ''} ${contratoJSON.Cliente.Persona.segundoApellido || ''}`.trim() : '',
+                    correo: contratoJSON.Cliente.Persona?.correo || '',
+                    telefono: contratoJSON.Cliente.Persona?.telefono || '',
+                    identificacion: contratoJSON.Cliente.Persona?.identificacion || ''
+                } : null,
+                bodega: contratoJSON.Bodega ? {
+                    descripcion: contratoJSON.Bodega.descripcion || '',
+                    direccion: contratoJSON.Bodega.direccion || '',
+                    codigoPostal: contratoJSON.Bodega.codigoPostal || '',
+                    ciudad: contratoJSON.Bodega.ciudad?.nombre || 'No especificada'
+                } : null,
+                fechaInicio: contratoJSON.fechaInicio,
+                fechaFin: contratoJSON.fechaFin,
+                status: contratoJSON.status || 'Pendiente',
+                precioTotal: contratoJSON.precioTotal || 0
+            };
+        });
+    } catch (error) {
+        console.error('Error en getAllContratos:', error);
+        throw new Error('Error al obtener los contratos: ' + error.message);
+    }
+};
 
-    // Transformar los datos para el frontend
-    return contratos.map(contrato => ({
-      id: contrato.id,
-      warehouse: contrato.Bodega.descripcion,
-      productType: "Tipo predeterminado", // Puedes ajustar esto según tus necesidades
-      rentalPeriod: `${contrato.fechaInicio.toLocaleDateString()} - ${contrato.fechaFin.toLocaleDateString()}`,
-      requestDate: contrato.createdAt.toLocaleDateString(),
-      requester: `Cliente ${contrato.clienteId}`,
-      status: contrato.status
-    }));
-  } catch (error) {
-    console.error('Error en getAllContratos:', error);
-    throw error;
-  }
+export const getContratosByClienteId = async (clienteId) => {
+    return await contratoRepository.findByClienteId(clienteId);
 };
 
 export const getContratoById = async (id) => {
-  return await Contrato.findByPk(id, {
-    include: ['Cliente', 'Bodega']
-  });
+    return await contratoRepository.findById(id);
 };
 
 export const createContrato = async (contratoData) => {
-  return await Contrato.create(contratoData);
+    return await contratoRepository.create(contratoData);
 };
 
 export const updateContrato = async (id, contratoData) => {
-  const contrato = await Contrato.findByPk(id);
-  if (!contrato) return null;
-  return await contrato.update(contratoData);
+    return await contratoRepository.update(id, contratoData);
 };
 
 export const deleteContrato = async (id) => {
-  const contrato = await Contrato.findByPk(id);
-  if (!contrato) return false;
-  await contrato.destroy();
-  return true;
+    return await contratoRepository.delete(id);
 };

@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../../config/database.js';
-import Ciudad from '../ubicacion/Ciudad.js';
+import Ciudad from '../ubicacion/Ciudad.js'; // Corregir la ruta de importación
 import TipoBodega from './TipoBodega.js';
 
 const Bodega = sequelize.define('Bodega', {

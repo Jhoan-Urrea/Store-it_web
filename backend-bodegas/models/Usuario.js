@@ -4,6 +4,16 @@ import TipoUsuario from './TipoUsuario.js';
 import Persona from './Persona.js';
 
 const Usuario = sequelize.define('Usuario', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  correo: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
+    unique: true
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: false
@@ -13,19 +23,24 @@ const Usuario = sequelize.define('Usuario', {
     allowNull: false,
     references: {
       model: TipoUsuario,
-      key: 'id',
-    },
-    onDelete: 'CASCADE',
+      key: 'id'
+    }
   },
   personaId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: Persona,
-      key: 'id',
-    },
-    onDelete: 'CASCADE',
+      key: 'id'
+    }
   }
+}, {
+  tableName: 'Usuarios'
+});
+
+Usuario.belongsTo(TipoUsuario, {
+  foreignKey: 'tipoUsuarioId',
+  as: 'TipoUsuario'
 });
 
 export default Usuario;
