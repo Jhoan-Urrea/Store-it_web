@@ -10,4 +10,7 @@ router.post('/', sectorController.create);
 router.put('/:id', sectorController.update);
 router.delete('/:id', sectorController.delete);
 
+// Obtener todos los sectores de una bodega
+router.get('/bodega/:idBodega', sectorController.getByBodegaId);
+
 export default router;

@@ -237,22 +237,6 @@ export const seedInitialData = async () => {
         status: 'Pendiente',
         precioTotal: 1500000
       },
-      {
-        clienteId: cliente.id,
-        bodegaId: 6, // Bodega Refrigerada
-        fechaInicio: new Date(),
-        fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 6)),
-        status: 'Aprobado',
-        precioTotal: 2000000
-      },
-      {
-        clienteId: cliente.id,
-        bodegaId: 7, // Bodega Seguridad Alta
-        fechaInicio: new Date(),
-        fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-        status: 'Pendiente',
-        precioTotal: 3000000
-      }
     ];
 
     for (const contratoData of contratos) {
