@@ -1,4 +1,5 @@
 import contratoRepository from '../repositories/contrato-repository.js';
+import notificationService from './notification-services.js';
 
 export const getAllContratos = async () => {
     try {
@@ -42,7 +43,30 @@ export const getContratoById = async (id) => {
 };
 
 export const createContrato = async (contratoData) => {
-    return await contratoRepository.create(contratoData);
+    try {
+        const contrato = await contratoRepository.create(contratoData);
+        
+        // Crear notificación para el cliente
+        await notificationService.createRequestProcessingNotification(
+            contratoData.clienteId,
+            contratoData.bodega?.descripcion || 'solicitada'
+        );
+
+        // Si hay un vendedor asignado, crear notificación para él también
+        if (contratoData.vendedorId) {
+            await notificationService.createNotification({
+                userId: contratoData.vendedorId,
+                title: 'Nueva Solicitud de Contrato',
+                message: `Se ha recibido una nueva solicitud de contrato para la bodega ${contratoData.bodega?.descripcion || 'solicitada'}`,
+                type: 'request',
+                read: false
+            });
+        }
+        
+        return contrato;
+    } catch (error) {
+        throw new Error('Error al crear el contrato: ' + error.message);
+    }
 };
 
 export const updateContrato = async (id, contratoData) => {
@@ -51,4 +75,12 @@ export const updateContrato = async (id, contratoData) => {
 
 export const deleteContrato = async (id) => {
     return await contratoRepository.delete(id);
+};
+
+export const deleteRequest = async (id, userId, userRole) => {
+    try {
+        return await contratoRepository.deleteRequest(id, userId, userRole);
+    } catch (error) {
+        throw new Error('Error al eliminar la solicitud: ' + error.message);
+    }
 };

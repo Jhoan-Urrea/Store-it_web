@@ -9,6 +9,7 @@ import TipoBodega from '../models/negocio/TipoBodega.js';
 import Bodega from '../models/negocio/Bodega.js';
 import Contrato from '../models/negocio/Contrato.js';
 import Usuario from '../models/Usuario.js';
+import Notification from '../models/Notification.js';
 import bcrypt from 'bcrypt';
 
 export const seedInitialData = async () => {
@@ -83,6 +84,39 @@ export const seedInitialData = async () => {
       }
     });
     console.log('Usuario encontrado/creado para:', persona.primerNombre);
+
+    // Crear notificaciones iniciales para Juan Pérez
+    await Notification.findOrCreate({
+      where: { 
+        userId: usuario.id,
+        title: '¡Bienvenido a Store-it!'
+      },
+      defaults: {
+        userId: usuario.id,
+        title: '¡Bienvenido a Store-it!',
+        message: 'Bienvenido a nuestra plataforma. Aquí podrás gestionar tus bodegas de manera fácil y segura. Comienza explorando las bodegas disponibles en la sección de Contratos.',
+        type: 'welcome',
+        read: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    });
+
+    await Notification.findOrCreate({
+      where: { 
+        userId: usuario.id,
+        title: 'Nueva Bodega Disponible'
+      },
+      defaults: {
+        userId: usuario.id,
+        title: 'Nueva Bodega Disponible',
+        message: 'Tenemos nuevas bodegas disponibles en Armenia. ¡Revisa nuestro catálogo actualizado!',
+        type: 'request',
+        read: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    });
 
     // 4.2 Crear o encontrar Persona para Vendedor
     const [personaVendedor] = await Persona.findOrCreate({
@@ -231,7 +265,7 @@ export const seedInitialData = async () => {
     const contratos = [
       {
         clienteId: cliente.id,
-        bodegaId: 5, // Bodega Principal
+        bodegaId: bodegas[0].id, // Usar el ID de la primera bodega creada
         fechaInicio: new Date(),
         fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 3)),
         status: 'Pendiente',
@@ -239,16 +273,31 @@ export const seedInitialData = async () => {
       },
     ];
 
+    // Añadir logging para debug
+    console.log('IDs de bodegas disponibles:', bodegas.map(b => b.id));
+    console.log('Datos de contratos a crear:', contratos);
+
     for (const contratoData of contratos) {
-      const [contrato] = await Contrato.findOrCreate({
-        where: { 
-          clienteId: contratoData.clienteId,
-          bodegaId: contratoData.bodegaId,
-          status: contratoData.status
-        },
-        defaults: contratoData
-      });
-      console.log(`Contrato ${contrato.status} creado/encontrado para bodega ${contratoData.bodegaId}`);
+      try {
+        const [contrato] = await Contrato.findOrCreate({
+          where: { 
+            clienteId: contratoData.clienteId,
+            bodegaId: contratoData.bodegaId
+          },
+          defaults: contratoData
+        });
+        console.log(`Contrato creado/encontrado:`, {
+          id: contrato.id,
+          clienteId: contrato.clienteId,
+          bodegaId: contrato.bodegaId,
+          status: contrato.status
+        });
+      } catch (error) {
+        console.error('Error al crear contrato:', {
+          error: error.message,
+          contratoData: contratoData
+        });
+      }
     }
 
     console.log('Datos iniciales sembrados correctamente');

@@ -48,11 +48,7 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        console.log('Usuario autenticado:', {
-            id: usuario.id,
-            tipoUsuario: usuario.TipoUsuario.tipoUsuario
-        });
-
+        // Guardar el ID del usuario en la respuesta
         res.json({
             token,
             user: {
