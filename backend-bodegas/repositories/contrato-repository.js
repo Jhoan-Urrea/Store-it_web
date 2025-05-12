@@ -1,75 +1,68 @@
-import Contrato from '../models/negocio/Contrato.js';
-import Bodega from '../models/negocio/Bodega.js';
-import Cliente from '../models/Cliente.js';
+import Contrato from "../models/negocio/Contrato.js";  
+import Cliente from "../models/Cliente.js";
+import Bodega from "../models/negocio/Bodega.js";
+import Persona from "../models/Persona.js";
+import Ciudad from "../models/ubicacion/Ciudad.js"; // Corregir la ruta de importación
 
 class ContratoRepository {
   async findAll() {
     return await Contrato.findAll({
       include: [
-        { model: Bodega },
-        { model: Cliente }
-      ]
-    });
-  }
-
-  async findById(id) {
-    return await Contrato.findByPk(id, {
-      include: [
-        { model: Bodega },
-        { model: Cliente }
-      ]
+        {
+          model: Cliente,
+          include: [{
+            model: Persona,
+            attributes: ['primerNombre', 'primerApellido', 'correo', 'telefono']
+          }]
+        },
+        {
+          model: Bodega,
+          attributes: ['descripcion', 'direccion', 'codigoPostal'],
+          include: [{
+            model: Ciudad,
+            as: 'ciudad',
+            attributes: ['nombre']
+          }]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
     });
   }
 
   async findByClienteId(clienteId) {
     return await Contrato.findAll({
       where: { clienteId },
-      include: [{ model: Bodega }]
+      include: [
+        {
+          model: Bodega,
+          attributes: ['descripcion', 'direccion', 'codigoPostal']
+        }
+      ],
+      order: [['createdAt', 'DESC']]
     });
   }
 
-  async create(data) {
-    return await Contrato.create(data);
+  async findById(id) {
+    return await Contrato.findByPk(id, {
+      include: ["cliente", "bodega"],
+    });
   }
 
-  async update(id, data) {
+  async create(contratoData) {
+    return await Contrato.create(contratoData);
+  }
+
+  async update(id, contratoData) {
     const contrato = await Contrato.findByPk(id);
-    if (!contrato) throw new Error('Contrato no encontrado');
-    return await contrato.update(data);
-  }
-
+    if (!contrato) throw new Error("Contrato no encontrado");
+    return await contrato.update(contratoData);
+  }     
+  
   async delete(id) {
     const contrato = await Contrato.findByPk(id);
-    if (!contrato) throw new Error('Contrato no encontrado');
+    if (!contrato) throw new Error("Contrato no encontrado");
     await contrato.destroy();
-    return true;
-  }
-
-  async deleteRequest(id, userId, userRole) {
-    console.log('Eliminando solicitud:', { id, userId, userRole });
-    
-    const contrato = await Contrato.findOne({
-      where: { 
-        id,
-        status: 'Pendiente'
-      },
-      include: [
-        { model: Cliente },
-        { model: Bodega }
-      ]
-    });
-
-    if (!contrato) {
-      throw new Error('Solicitud no encontrada');
-    }
-
-    if (contrato.clienteId !== userId && userRole !== 'vendedor') {
-      throw new Error('No autorizado para eliminar esta solicitud');
-    }
-
-    await contrato.destroy();
-    return true;
-  }
+  }   
 }
 
 export default new ContratoRepository();
