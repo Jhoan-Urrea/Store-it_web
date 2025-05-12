@@ -9,6 +9,8 @@ import listEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
 import mainRoutes from './routes/index.js';
 import { seedInitialData } from './seeders/initialData.js';
+import './models/associations.js';
+
 
 dotenv.config();
 
@@ -37,6 +39,7 @@ app.get('/', (req, res) => {
 async function startServer() {
   try {
     await sequelize.sync({ force: false }); // Mantener false para no recrear las tablas
+
     await connectSequelize();
   
     console.log('Iniciando carga de datos iniciales...');

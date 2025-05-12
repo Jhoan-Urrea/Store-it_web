@@ -1,4 +1,6 @@
 // puesto-controller.js
+import Puesto from '../models/negocio/Puesto.js';
+
 export const puestoController = {
   getAll: async (req, res) => {
     try {
@@ -21,6 +23,17 @@ export const puestoController = {
       res.status(500).json({ error: error.message });
     }
   },
+  getBySectorId: async (req, res) => {
+  try {
+    const puestos = await Puesto.findAll({
+      where: { idSector: req.params.idSector }
+    });
+    res.json(puestos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al obtener puestos del sector.' });
+  }
+},
 
   create: async (req, res) => {
     try {

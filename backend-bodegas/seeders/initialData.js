@@ -271,22 +271,6 @@ export const seedInitialData = async () => {
         status: 'Pendiente',
         precioTotal: 1500000
       },
-      {
-        clienteId: cliente.id,
-        bodegaId: bodegas[1].id, // Usar el ID de la segunda bodega creada
-        fechaInicio: new Date(),
-        fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 6)),
-        status: 'Aprobado',
-        precioTotal: 2000000
-      },
-      {
-        clienteId: cliente.id,
-        bodegaId: bodegas[2].id, // Usar el ID de la tercera bodega creada
-        fechaInicio: new Date(),
-        fechaFin: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-        status: 'Pendiente',
-        precioTotal: 3000000
-      }
     ];
 
     // Añadir logging para debug

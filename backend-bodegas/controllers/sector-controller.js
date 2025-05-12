@@ -1,4 +1,8 @@
 // sector-controller.js
+
+import Sector from '../models/negocio/Sector.js';
+import Puesto from '../models/negocio/Puesto.js';
+
 export const sectorController = {
   getAll: async (req, res) => {
     try {
@@ -21,6 +25,21 @@ export const sectorController = {
       res.status(500).json({ error: error.message });
     }
   },
+
+  getByBodegaId: async (req, res) => {
+    try {
+    const sectores = await Sector.findAll({
+      where: { idBodega: req.params.idBodega },
+      include: [{ model: Puesto, as: 'puestos' }]
+    });
+    res.json(sectores);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al obtener sectores de la bodega.' });
+  }
+  },
+
+  
 
   create: async (req, res) => {
     try {

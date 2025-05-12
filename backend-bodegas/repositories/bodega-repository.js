@@ -1,6 +1,9 @@
 import Bodega from '../models/negocio/Bodega.js';
 import TipoBodega from '../models/negocio/TipoBodega.js';
 import Ciudad from '../models/ubicacion/Ciudad.js';
+import Sector from '../models/negocio/Sector.js'
+import Puesto from '../models/negocio/Puesto.js'
+
 
 class BodegaRepository {
     async findAll() {
@@ -15,6 +18,16 @@ class BodegaRepository {
                     model: Ciudad,
                     as: 'ciudad',
                     attributes: ['nombre']
+                },
+                {
+                    model: Sector,
+                    as: 'sectores',
+                    include: [
+                        {
+                            model: Puesto,
+                            as: 'puestos'
+                        }
+                    ]
                 }
             ]
         });
@@ -22,7 +35,17 @@ class BodegaRepository {
 
     async findById(id) {
         return await Bodega.findByPk(id, {
-            include: ['tipoBodega', 'ciudad']
+            include: ['tipoBodega', 'ciudad',
+                {
+                    model: Sector,
+                    as: 'sectores',
+                    include: [
+                        {
+                            model: Puesto,
+                            as: 'puestos'
+                        }
+                    ]
+                }]
         });
     }
 
